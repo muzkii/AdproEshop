@@ -49,3 +49,30 @@ by Andriyo Averill Fahrezi, NPM of 2306172325
 
 By applying these improvements which I haven't made, the EShop can be more robust and secure.
 
+## Reflection 2
+
+After writing the unit tests, I feel that they provide a great level of confidence in the correctness of the program. They allow us to detect bugs early and ensure that each function behaves as expected. Writing tests also helps to better understand the code and its requirements. However, at times, creating tests can feel repetitive and time-consuming, especially when ensuring that all edge cases are covered.
+
+The number of unit tests in a class depends on its complexity and the number of methods that require validation. Ideally, every method should have at least one corresponding test, but additional tests should be written to cover different scenarios, such as edge cases and invalid inputs.
+
+To ensure that our unit tests are sufficient to verify our program, we can use code coverage tools. Code coverage measures the percentage of the codebase that is executed during testing. A high code coverage percentage (e.g., 80-90%) generally indicates a well-tested application. However, achieving 100% code coverage does not guarantee that the code is free of bugs. Some issues, such as logical errors or integration problems, may not be captured by unit tests alone.
+
+Suppose after writing the `CreateProductFunctionalTest.java`, I was asked to create another functional test suite to verify the number of items in the product list. If I simply copy the previous test structure and make minor modifications, the new test suite may introduce code duplication and reduce code quality. This can lead to maintainability issues, as any future changes will need to be made in multiple places, increasing the risk of inconsistencies.
+
+### Potential clean code issues in this scenario include:
+
+1. Code Duplication – Having similar test setup procedures and instance variables in multiple test classes leads to redundancy.
+
+2. Lack of Reusability – Instead of reusing common functionality, each test suite may implement its own version of setup and test logic.
+
+3. Poor Maintainability – If there are changes to the testing framework, URLs, or configurations, they need to be updated in multiple places, making the code harder to maintain.
+
+### To improve code cleanliness, we can:
+
+1. Extract Common Setup Code – Move shared setup logic (e.g., server configuration, WebDriver initialization) to a base test class.
+
+2. Use Parameterized Tests – Instead of writing multiple similar tests, use parameterized tests to check different input scenarios within a single method.
+
+3. Modularize Helper Methods – Extract repeated test logic into utility methods, improving readability and reducing redundancy.
+
+4. By following these improvements, we can ensure that our test suite remains maintainable, scalable, and efficient while still providing comprehensive coverage of the application's functionality.
