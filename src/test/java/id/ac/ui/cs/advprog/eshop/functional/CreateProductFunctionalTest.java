@@ -54,15 +54,18 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProduct_withEmptyFields_showsError(ChromeDriver driver) throws Exception {
+    void createProduct_withEmptyFields_showsError(ChromeDriver driver) {
         driver.get(baseUrl + "/product/create");
-
+    
         WebElement submitButton = driver.findElement(By.tagName("button"));
         submitButton.click();
-
-        // Check if error messages exist
-        boolean isErrorDisplayed = driver.getPageSource().contains("This field is required");
-        assertTrue(isErrorDisplayed, "Validation error should be displayed for empty fields.");
+    
+        WebElement nameInput = driver.findElement(By.id("nameInput"));
+    
+        boolean isNameInvalid = nameInput.getAttribute("validationMessage") != null 
+                                && !nameInput.getAttribute("validationMessage").isEmpty();
+    
+        assertTrue(isNameInvalid, "Name input should show validation error.");
     }
 
     @Test
