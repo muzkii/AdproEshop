@@ -23,7 +23,7 @@ jobs:
 
       - name: Build and Push Docker Image
         run: |
-          docker build -t muzkii/eshop:latest .
+          docker build -t muzkii/eshop:latest -f ./Dockerfile .
           docker push muzkii/eshop:latest
 
       - name: Deploy to Koyeb
