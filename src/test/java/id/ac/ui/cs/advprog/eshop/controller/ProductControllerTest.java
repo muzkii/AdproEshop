@@ -23,7 +23,6 @@ class ProductControllerTest {
     @Mock
     private ProductService productService;
 
-    @InjectMocks
     private ProductController productController;
 
     private Product sampleProduct;
@@ -32,6 +31,7 @@ class ProductControllerTest {
     @BeforeEach
     void setUp() {
         MockitoAnnotations.openMocks(this);
+        productController = new ProductController(productService);
         sampleProduct = new Product();
         sampleProduct.setProductId("12345");
         sampleProduct.setProductName("Test Product");
