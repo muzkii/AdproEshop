@@ -3,6 +3,7 @@
 
     WORKDIR /src/advshop
     COPY . .  
+    RUN chmod +x gradlew
     RUN ./gradlew clean bootJar  
     
     # ---- Stage 2: Run the Application ----
