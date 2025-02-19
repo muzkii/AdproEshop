@@ -155,7 +155,7 @@ Suppose after writing the `CreateProductFunctionalTest.java`, I was asked to cre
       ...
      ```
 
-4. Low Maintanability : "Remove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body on `CreateProductFunctionalTest.java`
+4. Low Maintanability : "Remove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body on `CreateProductFunctionalTest.java`"
 
    Removing `throws Exception` on each of the function that uses it. To fix this it is very easy, just by deleting the Exception.
    - Before :
@@ -177,7 +177,7 @@ Suppose after writing the `CreateProductFunctionalTest.java`, I was asked to cre
       ...
      ```
 
-5. Low Maintanability : "Remove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body on `HomePageFunctionalTest.java`
+5. Low Maintanability : "Remove the declaration of thrown exception 'java.lang.Exception', as it cannot be thrown from method's body on `HomePageFunctionalTest.java`"
 
    Removing `throws Exception` on each of the function that uses it. To fix this it is very easy, just by deleting the Exception.
    - Before :
@@ -219,7 +219,7 @@ Suppose after writing the `CreateProductFunctionalTest.java`, I was asked to cre
      ...
      ```
 
-6. High Maintanability : "@Autowired Remove this field injection and use constructor injection instead on `ProductController.java`
+6. High Maintanability : "@Autowired Remove this field injection and use constructor injection instead on `ProductController.java`"
 
    Here it is a bit complicated. By using constructor injection, the dependencies are explicit and must be passed during an object’s construction. This avoids the possibility of instantiating an object in an invalid state and makes types more testable. Fields can be declared final, which makes the code easier to understand, as dependencies don’t change after instantiation. I used SonarQube's IDE to solve the issue by using constructor injection. The `ProductService` dependency is injected via the constructor, and the field is declared as final. By the changes, it would make the dependencies explicit and ensures that they are provided during the construction of the `ProductController` object.
 
@@ -320,9 +320,9 @@ Suppose after writing the `CreateProductFunctionalTest.java`, I was asked to cre
 
 **Yes**, the current implementation of the CI/CD pipeline follows the principles of Continuous Integration (CI) and Continuous Deployment (CD). The pipeline automatically runs test suites through the `ci.yml` workflow, ensuring that every push and pull request is validated before merging. This aligns with the concept of CI, where automated testing is essential to detect issues early in the development cycle.
 
-Additionally, the integration of SonarCloud analysis in `sonarcloud.yml` ensures that code quality and security vulnerabilities are continuously assessed. This process provides valuable feedback to developers, helping maintain high-quality code. The use of the OpenSSF Scorecard workflow further strengthens security by analyzing the supply chain risks associated with the project, which is an important aspect of maintaining software integrity in CI/CD.
+Additionally, the integration of SonarCloud analysis in `sonarcloud.yml` ensures that code quality and security vulnerabilities are continuously assessed. This process helps maintain high-quality code. The use of the OpenSSF Scorecard workflow further strengthens security by analyzing the supply chain risks associated with the project, which is an important aspect of maintaining software integrity in CI/CD.
 
-For deployment, the `deploy.yml` workflow automates the process of building and pushing Docker images to Docker Hub and subsequently deploying to Koyeb. While Koyeb's autobuilder may replace the need for manual deployment, having a defined CI/CD workflow for deployment ensures consistency. However, since Koyeb uses an autobuilder, the explicit deployment steps may not be necessary and could be optimized further.
+For deployment, the `deploy.yml` workflow automates the process of building and pushing Docker images to Docker Hub and subsequently deploying to Koyeb. While Koyeb's autobuilder may replace the need for manual deployment, having a defined CI/CD workflow for deployment ensures consistency. However, since Koyeb uses an autobuilder, the explicit deployment steps may not be necessary.
 
-Overall, the current implementation meets the core definition of CI/CD by automating code testing, quality analysis, and deployment processes. However, improvements could be made to streamline the deployment workflow, ensuring that only necessary steps are executed based on the specific PaaS requirements.
+Overall, the current implementation meets the core definition of CI/CD by automating code testing, quality analysis, and deployment processes. However, improvements could be made by solving some of the code quality issues stated on SonarCloud. Even though I have already fixed 90% of them, there is still some leftovers.
    
