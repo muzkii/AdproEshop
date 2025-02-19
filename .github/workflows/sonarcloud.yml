@@ -31,6 +31,9 @@ jobs:
 
       - name: Add gradlew permission
         run: chmod +x gradlew
+      
+      - name: Build, Run Tests, and Generate Coverage Report
+        run: ./gradlew clean test jacocoTestReport
         
       - name: Build and Analyze with SonarCloud
         env:
