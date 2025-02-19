@@ -33,5 +33,5 @@ jobs:
         env:
           KOYEB_API_TOKEN: ${{ secrets.KOYEB_API_TOKEN }}
         run: |
-          curl -X POST "https://app.koyeb.com/v1/apps/eshop/deploy" \
+          curl -X POST "https://app.koyeb.com/v1/apps/adproeshop/deploy" \
           -H "Authorization: Bearer $KOYEB_API_TOKEN"
