@@ -69,7 +69,7 @@ class CreateProductFunctionalTest {
     }
 
     @Test
-    void createProductPage_hasRequiredFields(ChromeDriver driver) throws Exception {
+    void createProductPage_hasRequiredFields(ChromeDriver driver) {
         driver.get(baseUrl + "/product/create");
 
         assertNotNull(driver.findElement(By.id("nameInput")), "Name input should be present.");
