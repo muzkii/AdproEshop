@@ -83,6 +83,10 @@ Suppose after writing the `CreateProductFunctionalTest.java`, I was asked to cre
 
 ### Reflection
 
+#### Code Coverage 
+
+![image](https://github.com/user-attachments/assets/f95a6478-fdb3-4104-a497-2ebf3994b5a2)
+
 #### Fixed Code Quality Issues
 
 1. Low Maintainability : "Remove the declaration of unused imports on `HomeControllerTest.java`"
