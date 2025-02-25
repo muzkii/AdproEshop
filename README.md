@@ -330,3 +330,187 @@ For deployment, the `deploy.yml` workflow automates the process of building and 
 
 Overall, the current implementation meets the core definition of CI/CD by automating code testing, quality analysis, and deployment processes. However, improvements could be made by solving some of the code quality issues stated on SonarCloud. Even though I have already fixed 90% of them, there is still some leftovers.
    
+## Module 3 
+
+### Reflection 
+
+#### SOLID Principles That I Applied to My Project
+   In this project, I have applied three **SOLID** principles—**Single Responsibility Principle (SRP), Open/Closed Principle, and Liskov Subtitution Principle (LSP)**—to improve maintanability and as way to learn development conventions.
+   
+1. **SRP (Single-Responsibility Principle)**
+
+      The Single Responsibility Principle (SRP) states that a class or module should have one responsibility. Initially, we have already implemented this bty having Services such as `CarServiceImpl` and `ProductServiceImpl` to handle all the logic, meanwhile we would have Repositories `CarRepository` and `ProductRepository` to focus on data persistence. I applied this to `ProductController.java` in the Controller module by moving `CarController` class that originally extends the `ProductController` class to a new file called `CarController.java`. This way, both `CarController.java` and `ProductController.java` only handles the data access of respective objects.
+
+2. **OCP (Open/Closed Principle)**
+
+      The Open/Closed Principle (OCP) states that software entities should be open for extension but closed for modification. Previously, adding a new Repository required modifying existing Service classes. We can change that by implementing OCP. Here, we would have two new files called `IProductRepository.java` and `ICarRepository.java` which is basically an interface for both of the respective repositories. So, the original `CarRepository.java` and `ProductRepository.java` both implements their own interface repository. Now, with the help of OCP, new repositories extend the existing interfaces without affecting old implementations. For example, if we need a new repository called `MotorcycleRepository`, we can implement a new interface without changing old code.
+
+3. **LSP (Liskov Substitution Principle)**
+
+      The Liskov Subtitution Principle (LSP) states that objects of a superclass should be replaceable with objects of its subclasses without affecting the correctness of the program. Here, I added a new file called `IRepository.java` that acts as a base for both `ICarRepository` and `IProductRepository`. This would ensure that any future repositories can be swapped in without breaking functionality. I applied it to `ICarRepository.java`, `IProductRepository.java`, `CarRepository.java`, and `ProductRepository.java`. 
+   
+#### Advantages of Applying SOLID Principles 
+
+1. **Easier to Modify and Scale**
+   
+   i.       After applying SOLID Principles, if we need to add new functionality, OCP ensures that we don't have to modify existing classes.
+
+   ii.      SRP makes each class easier to understand and update without unintended side effects.
+
+   Example:
+
+   Suppose we need to add a new entity called **Motorcycle** alongisde Car and Product. Because of OCP, we only need to create `IBikeRepository` and `BikeRepository` without modifying existing repository classes. Services can directly interact wth the `IBikeRepository` interface, ensuring consistency across all product types. **Without OCP**, we have to modify `CarServiceImpl` and `ProductServiceImpl` everytime a new repository is added, this could break or make an error on breaking existing functionality.
+
+   - Before (OCP Violation)
+     ```java
+     ...
+      import java.util.UUID; 
+      
+      @Repository
+      public class CarRepository {
+      
+          static int id = 0 ;
+          private List<Car> carData = new ArrayList<>();
+     ...
+     ```
+   - After (OCP Applied)
+     ```java
+     ...
+      import java.util.UUID; 
+      
+      @Repository
+      public class CarRepository implements ICarRepository {
+      
+          static int id = 0 ;
+          private List<Car> carData = new ArrayList<>();
+     ...
+     ```
+     
+2. **More Flexible Code Structure**
+   
+   i.       LSP ensures that all repositories behave consistently, allowing us to swap implementations seamlessly.
+
+   Example:
+
+   Right now, both `ICarRepository` and `IProductRepository` follow a similar contract with methods like `create()`, `findAll()`, `findById()`, `delete()`. Because of LSP, we can create a generic interface like `IRepository<T>` to enforce consistency accross all repositories. **Without LSP**, if `CarRepository` returned `Iterator<Car>` but `ProductRepository` returned `List<Product>`, the service layer would have to handle them differently, making the code harder to manage.
+
+   - Before (LSP Violation)
+     ```java
+      public interface ICarRepository {
+          Car create(Car car);
+          Iterator<Car> findAll();
+          Car findById(String carId);
+          Car update(String carId, Car car);
+          void delete(String carId);
+      }
+      
+      public interface IProductRepository {
+          Product create(Product product);
+          Iterator<Product> findAll();
+          Product findById(String productId);
+          Product update(Product product);
+          void delete(String productId);
+      }
+     ```
+   - After (LSP Applied)
+     ```java
+      public interface IRepository<T> {
+          T create(T entity);
+          Iterator<T> findAll();
+          T findById(String id);
+          T update(String id, T entity);
+          void delete(String id);
+      }
+
+     public interface ICarRepository extends IRepository<Car> {}
+     public interface IProductRepository extends IRepository<Product> {}
+     ```
+      
+3. **Improved Readability and Maintainability**
+
+   i.       SRP ensures that each class has a clear and well-defined responsibility, making the codebase easier to navigate.
+
+   Example:
+
+   Before applying SRP, `ProductController` was handling both mapping for `Product` and `Car`. After refactoring `ProductController.java` only handles mapping for products, meanwhile `CarController.java` handles mapping for cars. **Without SRP**, if the implementation were mixed into the repository, any future changes would require modifyign repository code.
+
+   - Before (SRP Violation)
+     ```java
+     // ProductController.java
+     ...
+      @Controller
+      @RequestMapping("/car")
+      class CarController extends ProductController {
+      
+          @Autowired
+          private CarServiceImpl carservice;
+      
+          public CarController(ProductService service) {
+              super(service);
+          }
+     ...
+     ```
+   - After (SRP Applied)
+     ```java
+     // CarController.java
+     ...
+      import org.springframework.ui.Model;
+      import org.springframework.web.bind.annotation.*;
+      
+      import java.util.List;
+      
+      @Controller
+      @RequestMapping("/car")
+      public class CarController {
+      
+          private final CarService carservice;
+      
+          public CarController(CarService carService) {
+              this.carservice = carService;
+          }
+     ...
+     ```
+   
+#### Disadvantages of Not Applying SOLID Principles
+
+1. **Harder to Extend (OCP Violation)**
+
+   Without OCP, adding a new repository requirees modifying existing service.
+
+   Example:
+
+   If `CarServiceImpl` directly depends on `CarRepository`, adding a new `MotorcycleRepository` means we must modify the service class
+   
+2. **Inconsistent and Error-Prone Code (LSP Violation)**
+
+   Example:
+
+   If `findAll()` returns different types across repositories, the service layer must handle each case separately, leading to bugs and inconsistent behavior. At first, `ICarRepository` returns an Iterator, meanwhile `IProductRepository` returns a List.
+
+   - Before (LSP Violation)
+     ```java
+      public interface ICarRepository {
+          Iterator<Car> findAll();  // Returns Iterator
+      }
+      
+      public interface IProductRepository {
+          List<Product> findAll();  // Returns List
+      }
+     ```
+   - After (LSP Applied)
+     ```java
+     // CarController.java
+      public interface IRepository<T> {
+          Iterator<T> findAll();
+      }
+     ```
+     
+3. **Code Becomes Harder to Maintain (SRP Violation)**
+
+   Example:
+
+   If we want to have a new `MotorcycleController`, we can't just straight extends it to the `ProductController`.
+
+   
+
+By applying SRP, OCP, and LSP, we have improved the modularity, scalability, and maintainability of our project. Future modifications and extensions can be implemented without modifying existing functionality, ensuring a more stable and flexible codebase.
