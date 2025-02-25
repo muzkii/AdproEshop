@@ -10,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -56,9 +55,7 @@ class ProductServiceImplTest {
         product2.setProductQuantity(5);
 
         List<Product> productList = Arrays.asList(sampleProduct, product2);
-        Iterator<Product> iteratorMock = productList.iterator();
-
-        when(productRepository.findAll()).thenReturn(iteratorMock);
+        when(productRepository.findAll()).thenReturn(productList);
 
         List<Product> result = productService.findAll();
 

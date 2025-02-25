@@ -7,9 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.Iterator;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 @ExtendWith(MockitoExtension.class)
 class ProductRepositoryTest {
 
@@ -29,9 +30,9 @@ class ProductRepositoryTest {
         product.setProductQuantity(100);
         productRepository.create(product);
 
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product savedProduct = productIterator.next();
+        List<Product> productList = productRepository.findAll();
+        assertFalse(productList.isEmpty());
+        Product savedProduct = productList.get(0);
         assertEquals(product.getProductId(), savedProduct.getProductId());
         assertEquals(product.getProductName(), savedProduct.getProductName());
         assertEquals(product.getProductQuantity(), savedProduct.getProductQuantity());
@@ -39,8 +40,8 @@ class ProductRepositoryTest {
 
     @Test
     void testFindAllIfEmpty() {
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertFalse(productIterator.hasNext());
+        List<Product> productList = productRepository.findAll();
+        assertTrue(productList.isEmpty());
     }
 
     @Test
@@ -57,13 +58,10 @@ class ProductRepositoryTest {
         product2.setProductQuantity(50);
         productRepository.create(product2);
 
-        Iterator<Product> productIterator = productRepository.findAll();
-        assertTrue(productIterator.hasNext());
-        Product savedProduct = productIterator.next();
-        assertEquals(product1.getProductId(), savedProduct.getProductId());
-        savedProduct = productIterator.next();
-        assertEquals(product2.getProductId(), savedProduct.getProductId());
-        assertFalse(productIterator.hasNext());
+        List<Product> productList = productRepository.findAll();
+        assertEquals(2, productList.size());
+        assertEquals(product1.getProductId(), productList.get(0).getProductId());
+        assertEquals(product2.getProductId(), productList.get(1).getProductId());
     }
 
     // NEW TESTS FOR EDIT FEATURE
@@ -227,7 +225,7 @@ class ProductRepositoryTest {
         productRepository.delete("999"); // ID does not exist
 
         // Ensure that delete operation does not throw an error
-        assertEquals(0, productRepository.findAll().hasNext() ? 1 : 0, "Repository should still be empty.");
+        assertTrue(productRepository.findAll().isEmpty(), "Repository should still be empty.");
     }
 
     @Test
@@ -271,8 +269,8 @@ class ProductRepositoryTest {
         productRepository.create(product1);
         productRepository.create(product2);
 
-        Iterator<Product> iterator = productRepository.findAll();
-        assertTrue(iterator.hasNext());
+        List<Product> productList = productRepository.findAll();
+        assertFalse(productList.isEmpty());
     }
 
     @Test
@@ -367,48 +365,49 @@ class ProductRepositoryTest {
         assertNotNull(createdProduct.getProductId(), "Product ID should be auto-generated");
         assertFalse(createdProduct.getProductId().isEmpty(), "Product ID should not be empty");
     }
+
     @Test
-void testUpdateProduct_Success_ProductIdMatches() {
-    // Arrange
-    Product product = new Product();
-    product.setProductId("123");
-    product.setProductName("Old Name");
-    product.setProductQuantity(10);
-    productRepository.create(product);
+    void testUpdateProduct_Success_ProductIdMatches() {
+        // Arrange
+        Product product = new Product();
+        product.setProductId("123");
+        product.setProductName("Old Name");
+        product.setProductQuantity(10);
+        productRepository.create(product);
 
-    // Act
-    Product updatedProduct = new Product();
-    updatedProduct.setProductId("123");
-    updatedProduct.setProductName("New Name");
-    updatedProduct.setProductQuantity(20);
+        // Act
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("123");
+        updatedProduct.setProductName("New Name");
+        updatedProduct.setProductQuantity(20);
 
-    Product result = productRepository.update(updatedProduct);
+        Product result = productRepository.update(updatedProduct);
 
-    // Assert
-    assertNotNull(result);
-    assertEquals("123", result.getProductId());
-    assertEquals("New Name", result.getProductName());
-    assertEquals(20, result.getProductQuantity());
-}
+        // Assert
+        assertNotNull(result);
+        assertEquals("123", result.getProductId());
+        assertEquals("New Name", result.getProductName());
+        assertEquals(20, result.getProductQuantity());
+    }
 
-@Test
-void testUpdateProduct_Fail_ProductIdDoesNotMatch() {
-    // Arrange
-    Product product = new Product();
-    product.setProductId("123");
-    product.setProductName("Old Name");
-    product.setProductQuantity(10);
-    productRepository.create(product);
+    @Test
+    void testUpdateProduct_Fail_ProductIdDoesNotMatch() {
+        // Arrange
+        Product product = new Product();
+        product.setProductId("123");
+        product.setProductName("Old Name");
+        product.setProductQuantity(10);
+        productRepository.create(product);
 
-    // Act
-    Product updatedProduct = new Product();
-    updatedProduct.setProductId("456"); // Different ID
-    updatedProduct.setProductName("New Name");
-    updatedProduct.setProductQuantity(20);
+        // Act
+        Product updatedProduct = new Product();
+        updatedProduct.setProductId("456"); // Different ID
+        updatedProduct.setProductName("New Name");
+        updatedProduct.setProductQuantity(20);
 
-    Product result = productRepository.update(updatedProduct);
+        Product result = productRepository.update(updatedProduct);
 
-    // Assert
-    assertNull(result, "Update should return null if product ID does not match");
-}
+        // Assert
+        assertNull(result, "Update should return null if product ID does not match");
+    }
 }
