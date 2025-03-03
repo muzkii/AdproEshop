@@ -1,6 +1,6 @@
 package id.ac.ui.cs.advprog.eshop.service;
 
-import static org.junit.jupiter.api.Assertions.*
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -19,7 +19,6 @@ import id.ac.ui.cs.advprog.eshop.enums.OrderStatus;
 import id.ac.ui.cs.advprog.eshop.model.Product;
 import id.ac.ui.cs.advprog.eshop.repository.OrderRepository;
 import id.ac.ui.cs.advprog.eshop.model.Order;
-import id.ac.ui.cs.advprog.eshop.service.OrderServiceImpl; 
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceImplTest {
@@ -29,7 +28,7 @@ class OrderServiceImplTest {
    @Mock
    OrderRepository orderRepository;
 
-   List<Order> orderList;
+   List<Order> orders;
 
    @BeforeEach
    void setUp() {
