@@ -514,3 +514,76 @@ Overall, the current implementation meets the core definition of CI/CD by automa
    
 
 By applying SRP, OCP, and LSP, we have improved the modularity, scalability, and maintainability of our project. Future modifications and extensions can be implemented without modifying existing functionality, ensuring a more stable and flexible codebase.
+
+## Module 4
+
+### Reflection
+
+#### Self-Reflective Questions Based on Percival (2017)
+
+##### Correctness
+1. **Do I have enough functional tests to reassure myself that my application really works, from the point of view of the user?**
+
+   In my own opinion, **yes**, the test cover the user flows for working with orders such as creating orders, updating order status, and searching for orders by ID and/or author. All of these can be the primary interactions that users would have with the functionality of order. Each method in the `Order` file is covered by _**both happy and unhappy tests**_, ensuring all of the scenarios are well-tested. I can safely say that the core `Order` feature works correctly from the user's perspective.
+
+2. **Am I testing all the edge cases thoroughly?**
+
+   All of the tests cover several edge cases, such as:
+   -    Creating an order with an empty product list
+   -    Attempting to update status to an invalid value
+   -    Searching for orders using case-sensitive author names
+   -    Trying to find or update orders that don't exist
+
+      Since it is basically from the tutorial, in my opinion, these edge cases are quite enough to ensure code coverage. While there could always be more cases (maybe such as having a fixed length for author names). I can say that the coverage is reasonable for the current state of `Order`.
+  
+3. **Do I have tests that check whether all my components fit together properly? Could some integrated tests do this, or are functional tests enough?**
+
+   The unit tests focus on each individual components (model, repository, and service), ensuring each works correctly in their own. However, since the repository and service are quite related on each other, a small tests of integration tests could be beneficial. For example, testing the entire order creation and retrieval process from the start till the beginning would help ensure that repository and service interactions both work as expected together. For now, the functional coverage is good, but some lightweight integration tests would improve confidence in overall integration.
+   
+##### Maintanability
+4. **Are my tests giving me the confidence to refactor my code, fearlessly and frequently?**
+
+   **Yes**, the tests acts as a foundation and are key behaviors to the model, repository, and service. This gives me confidence to **refactor the `Order` class, the `OrderStatus`, and even the repository logic without introducing unexpected problems. Each refactor step was followed by a successful test run to ensure that no regression was made.
+   
+5. **Are my tests helping me to drive out a good design? If I have a lot of integration tests but less unit tests, do I need to make more unit tests to get better feedback on my code design?
+
+   The tests strongly influenced the design, especially around:
+   -    The added `OrderStatus` enum, which waas a direct result of refactoring tests to avoid repeated hardcoded strings
+   -    The decision from the tutorial to validate status inside the `Order` class, ensuring data consistency
+   -    Mocking `OrderRepository` in `OrderServiceImplTest`, which ensured the service logic was separated from the repository logic
+
+   As you can see, there is already a balance between unit and functional tests, **BUT** adding some integration tests could further improve confidence when let's say that the storage changes (database related).
+   
+##### Productive Workflow
+6. **Are my feedback cycles as fast as I would like them? When do I get warned about bugs, and is there any practical way to make that happen sooner?**
+
+   The unit tests for model, repository, and service run very quickly. On my machine, it executed all of the tests in under 50ms, which allows fast feedback during development. Bugs are typically caught immediately after changes, especially since we have implemented clear **Red-Green-Refactor** cycle followed during TDD. If the system grows to be more complex, splitting test suites into "fast unit tests" and "slow integration tests" could keep feedback cycles short.
+   
+7. **Is there some way that I could write faster integration tests that would get me feedback quicker?**
+
+   The current tests are mostly unit tests. So, in Java, they use in-memory data (lists) so they could be known as already fast. Suppose If we are using a real database later, using an external database for integration tests could maybe ensure faster feedback compared to a full external single database setup.
+   
+8. **Can I run a subset of the full test suite when I need to?**
+
+    **Yes**, using IntelliJ allows running individual test classes or even single test methods. This flexibility is already being used during TDD cycle, when I only run tests for the specific class I'm working on or have changed. This ensures faster iteration times when only focusing on specific components. Even though using VSCode could achieve the same process, VSCode is not entirely good for Java Development (have to install the appopriate extension first). IntelliJ in the other hand, specializes in Java Development.
+
+9. **Am I spending too much time waiting for tests to run, and thus less time in a product flow state?**
+
+   **No**, because it is only the tutorial and because the current test suite runs very quickly, thanks to :
+   -    Use of in-memory lists for the repository.
+   -    Minimal external dependencies.
+   -    Effective use of mocks
+
+   This ensrues the flow state is maintained and tests don't become a bottleneck. Maybe in bigger projects, adopting a selective test runs could help maintain it.
+   
+#### F.I.R.S.T. Principle Reflection
+
+The F.I.R.S.T. principles are a useful guideline to evaluate my unit tests. Reflecting on them:
+
+| Principle | Reflection | 
+|---------|--------------------------------|  
+| Fast | **Checked** Most of the executed tests were fast since they only tested in-memory logic (for example `Order` validation). Tests for `OrderServiceImpl` on the other hand uses Mockito that is also quick, as external dependencies were mocked. |
+| Independent | **Checked** Each test was on its own (isolated). This creates fresh instances of `Order` and `OrderRepository` in the `setUp()` method. No test relied on the state left behind by others, except all the statuses for `Order`. |
+| Repeatable | **Checked** All tests are consistenly passed across multiple runs. There were no flaky tests since we avoided external dependencies. |
+| Self-Validating | **Checked** Each test had clear assertions that directly validated the expected behavior (most likely because it is from the tutorial). There was no need for manual inspection of logs or system states. |
+| Timely | **Not Sure** Some tests, especially those for `OrderServiceImpl`, were only added after partial implementation (rather than strictly following TDD). In this case, it may be best if we were to write more failing tests before adding the service logic |
